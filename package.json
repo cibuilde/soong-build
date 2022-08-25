@@ -1,0 +1,8 @@
+{
+    "scripts": {
+        "download": "node ci.js"
+    },
+    "dependencies": {
+        "puppeteer": "^16.2.0"
+    }
+}
