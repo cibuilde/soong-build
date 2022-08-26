@@ -5,18 +5,15 @@ const puppeteer = require('puppeteer');
 
 const branches_url = 'https://ci.android.com/builds/branches.json'
 const status_url = 'https://ci.android.com/builds/branches/aosp-master/status.json'
-const target_name = 'aosp_x86_64-userdebug'
+//const target_name = 'aosp_x86_64-userdebug'
+const product = 'aosp_cf_x86_64_phone'
+const build_type = 'userdebug'
+const target_name = `${product}-${build_type}`
 
 const url_prefix = 'https://ci.android.com/builds/submitted/'
-const url_suffix = '/aosp_x86_64-userdebug/latest/soong_ui/'
-const files = [
-    {'filename': 'combined-aosp_x86_64.ninja.gz'},
-    {'filename': 'build-aosp_x86_64.ninja.gz'},
-    {'filename': 'build-aosp_x86_64-package.ninja.gz'},
-    {'path':'soong/', 'filename': 'build.ninja.gz'}
-]
-const click_url_suffix = '/aosp_x86_64-userdebug/latest/'
-const click_files = [ 'manifest', 'module-info.json', 'installed-files.txt', 'installed-files-root.txt', 'installed-files-ramdisk.txt' ]
+const url_suffix = `/${target_name}/latest/soong_ui/`
+const click_url_suffix = `/${target_name}/latest/`
+const click_files = [ 'BUILD_INFO', 'manifest', 'installed-files.txt', 'installed-files-root.txt', 'installed-files-ramdisk.txt', 'module-info.json' ]
 
 let save_file = (url, filename) => {
     https.get(url, res => {
@@ -86,6 +83,42 @@ let download_files = async (build_id) => {
         }
         downloading.add(filename)
     }
+    for (let i in click_files) {
+        let url = url_prefix + build_id + click_url_suffix + click_files[i]
+        let filename = click_files[i]
+        if (click_files[i] == 'manifest') {
+            url = url + '_' + build_id + '.xml'
+            filename = filename + '_' + build_id + '.xml'
+        }
+        await save_context(browser, url, filename)
+    }
+    for (const filename of downloading) {
+        const intervalObj = setInterval((f, s) => {
+            if (fs.existsSync(f)) {
+                console.log("Downloaded: " + f);
+                clearInterval(intervalObj);
+                s.delete(f)
+                if (s.size == 0) {
+                    console.log('starting download ninja file');
+                    download_ninja(build_id, page, browser)
+                }
+            }
+        }, 1000, filename, downloading);
+    }
+}
+
+let download_ninja = async (build_id, page, browser) => {
+    let rawdata = fs.readFileSync('BUILD_INFO').toString();
+    let id = rawdata.match(/combined-(.*).ninja.gz/)[1];
+    let ninja_id = id
+    console.log(id)
+    const files = [
+        {'filename': `combined-${ninja_id}.ninja.gz`},
+        {'filename': `build-${ninja_id}.ninja.gz`},
+        {'filename': `build-${ninja_id}-package.ninja.gz`},
+        {'path':'soong/', 'filename': 'build.ninja.gz'}
+    ]
+    let downloading = new Set()
     for (const {filename} of files) {
         downloading.add(filename)
     }
@@ -116,16 +149,6 @@ let download_files = async (build_id) => {
         await page.waitForTimeout(3000)
         //const button = (await page.waitForFunction(() => document.querySelector('#artifact_view_page').shadowRoot.querySelector('artifact-viewer').shadowRoot.querySelector('a.download'))).asElement();
         //await button.click();
-    }
-
-    for (let i in click_files) {
-        let url = url_prefix + build_id + click_url_suffix + click_files[i]
-        let filename = click_files[i]
-        if (click_files[i] == 'manifest') {
-            url = url + '_' + build_id + '.xml'
-            filename = filename + '_' + build_id + '.xml'
-        }
-        await save_context(browser, url, filename)
     }
 }
 

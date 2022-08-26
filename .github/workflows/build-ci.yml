@@ -24,34 +24,31 @@ jobs:
     - run: npm ci
     - run: npm run download
     - run: gzip -d *.gz
-    - run: mkdir -p out/soong && mv build-aosp_x86_64-package.ninja out && mv build-aosp_x86_64.ninja out && mv build.ninja out/soong
+    - run: mkdir -p out/soong && mv build-*.ninja out && mv build.ninja out/soong
     - run: git clone --depth=1 https://android.googlesource.com/platform/prebuilts/build-tools
     #- run: git clone --filter=tree:0 --single-branch --no-tags https://android.googlesource.com/platform/prebuilts/build-tools
-    - run: ./build-tools/linux-x86/bin/ninja -v -f combined-aosp_x86_64.ninja -t query systemimage
-    - run: ./build-tools/linux-x86/bin/ninja -v -f combined-aosp_x86_64.ninja -t commands systemimage > systemimage.sh
-    - run: ./build-tools/linux-x86/bin/ninja -v -f combined-aosp_x86_64.ninja -t targets > targets.txt
-    - run: ./build-tools/linux-x86/bin/ninja -v -f combined-aosp_x86_64.ninja -t graph > graph.txt
-    - run: ./build-tools/linux-x86/bin/ninja -v -f combined-aosp_x86_64.ninja -t commands ramdisk > ramdisk.sh
+    #- run: ./build-tools/linux-x86/bin/ninja -v -f `ls combined-*.ninja` -t query out/target/product/generic_x86_64/obj/PACKAGING/systemimage_intermediates/system.img
+    - run: ./build-tools/linux-x86/bin/ninja -v -f `ls combined-*.ninja` -t commands systemimage > systemimage.sh && gzip -k systemimage.sh
+    - run: ./build-tools/linux-x86/bin/ninja -v -f `ls combined-*.ninja` -t targets > targets.txt
+    - run: ./build-tools/linux-x86/bin/ninja -v -f `ls combined-*.ninja` -t graph > graph.dot && gzip graph.dot
+    - run: ./build-tools/linux-x86/bin/ninja -v -f `ls combined-*.ninja` -t commands ramdisk > ramdisk.sh
+    - run: find . -name 'manifest*.xml' | xargs python filter-projects.py
 
     - name: Archive output
       uses: actions/upload-artifact@v3
       with:
         name: output
         path: |
+          BUILD_INFO
           installed-files-root.txt 
           installed-files-ramdisk.txt 
           installed-files.txt
-          systemimage.sh
+          systemimage.sh.gz
           targets.txt
-          graph.txt
+          graph.dot.gz
           ramdisk.sh
           module-info.json
           branches.txt
           status.txt
           manifest*.xml
-
-#      local_manifest.xml
-#      sync.sh
-#- run: ./build-tools/linux-x86/bin/ninja -v -f combined-aosp_x86_64.ninja -t commands sync > sync.sh
-#- run: find . -name 'manifest*.xml' | xargs python filter-projects.py
-#- run: ./build-tools/linux-x86/bin/ninja -v -f combined-aosp_x86_64.ninja -t query out/target/product/generic_x86_64/obj/PACKAGING/systemimage_intermediates/system.img
+          local_manifest.xml
