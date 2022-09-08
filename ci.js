@@ -13,7 +13,7 @@ const target_name = `${product}-${build_type}`
 const url_prefix = 'https://ci.android.com/builds/submitted/'
 const url_suffix = `/${target_name}/latest/soong_ui/`
 const click_url_suffix = `/${target_name}/latest/`
-const click_files = [ 'BUILD_INFO', 'manifest', 'installed-files.txt', 'installed-files-root.txt', 'installed-files-ramdisk.txt', 'module-info.json' ]
+const click_files = [ 'BUILD_INFO', 'manifest', 'installed-files.txt', 'installed-files-root.txt', 'installed-files-ramdisk.txt', 'installed-files-product.txt', 'installed-files-system-other.txt', 'installed-files-system_ext.txt', 'installed-files-vendor.txt', 'module-info.json' ]
 
 let save_file = (url, filename) => {
     https.get(url, res => {
