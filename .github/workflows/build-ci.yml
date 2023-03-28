@@ -58,7 +58,15 @@ jobs:
         ln -sf $GITHUB_WORKSPACE/bpglob out/soong/.minibootstrap
         cp $GITHUB_WORKSPACE/ckati prebuilts/build-tools/linux-x86/bin
         GOROOT=`pwd`/prebuilts/go/linux-x86 TOP=`pwd` $GITHUB_WORKSPACE/soong_ui --make-mode --skip-ninja --skip-soong-tests --skip-write-modules -j1 TARGET_PRODUCT=aosp_cf_x86_64_phone TARGET_BUILD_VARIANT=userdebug ALLOW_MISSING_DEPENDENCIES=true BUILD_BROKEN_DISABLE_BAZEL=1 nothing
-        df -h
+        gzip out/soong/modules_deps.json
+        df -h && du -ah -d1 out && du -ah -d1 out/soong
+
+    - name: Archive modules_deps
+      uses: actions/upload-artifact@v3
+      with:
+        name: modules_deps.json.gz
+        path: |
+          aosp/out/soong/modules_deps.json
 
     - name: Archive repo
       uses: actions/upload-artifact@v3
