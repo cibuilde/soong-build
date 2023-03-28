@@ -43,6 +43,9 @@ jobs:
         git -C device/google/cuttlefish/ sparse-checkout set --no-cone '/*'
         git -C device/google/cuttlefish/ sparse-checkout reapply
         git -C prebuilts/build-tools/ reset --hard HEAD
+        git clone --filter=tree:0 --single-branch --no-tags --sparse --depth=1 https://android.googlesource.com/platform/prebuilts/clang-tools -b android12-gsi prebuilts/clang-tools
+        git -C prebuilts/clang-tools/ sparse-checkout set --no-cone '/*' '!/*/' 'linux-x86/bin' 'linux-x86/clang-headers' 'linux-x86/lib64/clang'
+        git -C prebuilts/clang-tools/ reset --hard HEAD
         cp build/make/core/root.mk Makefile
         ln -sf make/CleanSpec.mk build/ && ln -sf make/core build/
         ln -sf make/target build/ && ln -sf make/tools build/
