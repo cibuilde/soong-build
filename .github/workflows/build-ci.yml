@@ -261,7 +261,6 @@ jobs:
         rm -rf external/sl4a/
         rm -rf external/slf4j/
         rm -rf external/smali/
-        rm -rf external/starlark-go/
         rm -rf external/stressapptest/
         rm -rf external/subsampling-scale-image-view/
         rm -rf external/timezone-boundary-builder/
