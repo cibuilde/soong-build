@@ -4,7 +4,7 @@ const https = require('https');
 const puppeteer = require('puppeteer');
 
 const branches_url = 'https://ci.android.com/builds/branches.json'
-const status_url = 'https://ci.android.com/builds/branches/aosp-master/status.json'
+const status_url = 'https://ci.android.com/builds/branches/aosp-android12-gsi/status.json'
 //const target_name = 'aosp_x86_64-userdebug'
 const product = 'aosp_cf_x86_64_phone'
 const build_type = 'userdebug'

@@ -27,7 +27,7 @@ for p in projects:
     if "/" not in paths[p]:
         print("Ignore %s %s" % (p, paths[p]))
 
-file_path = "systemimage.sh"
+file_path = "superimage.sh"
 with io.open(file_path, "r", encoding="utf-8") as f:
     file_size = os.path.getsize(file_path)
     mm_systemimg = mmap.mmap(f.fileno(), file_size, access=mmap.ACCESS_READ)
