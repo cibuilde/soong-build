@@ -22,7 +22,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: ./clone_repo
-    - run: tar xf android12-gsi.tar.gz -C aosp --exclude="./out/"
+    - run: tar --exclude="./out/" -cfJ android12-gsi.tar.gz -C aosp .
 
     - name: Archive repo
       uses: actions/upload-artifact@v3
@@ -30,3 +30,11 @@ jobs:
         name: android12-gsi
         path: |
           android12-gsi.tar.gz
+
+    - name: Restore Cache android12-gsi.tar.xz
+      id: android12-gsi
+      uses: actions/cache@v3
+      with:
+        path: android12-gsi.tar.xz
+        key: android12-gsi
+        restore-keys: android12-gsi
