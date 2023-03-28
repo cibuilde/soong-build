@@ -332,6 +332,7 @@ jobs:
         rm -rf hardware/qcom/sm8150/vr/
         rm -rf hardware/qcom/sm8150p/gps/
         rm -rf hardware/qcom/wlan/
+        rm -rf hardware/qcom/
         rm -rf hardware/samsung/nfc/
         rm -rf hardware/st/nfc/
         rm -rf hardware/st/secure_element/
@@ -501,8 +502,18 @@ jobs:
         sed -i 's/TARGET_2ND_ARCH_VARIANT := silvermont/TARGET_2ND_ARCH_VARIANT := x86_64/' device/google/cuttlefish/vsoc_x86_64/BoardConfig.mk
         sed -i 's/TARGET_2ND_CPU_VARIANT := silvermont/TARGET_2ND_CPU_VARIANT := x86/' device/google/cuttlefish/vsoc_x86_64/BoardConfig.mk
         GOROOT=`pwd`/prebuilts/go/linux-x86 TOP=`pwd` $GITHUB_WORKSPACE/soong_ui --make-mode --skip-ninja --skip-soong-tests --skip-write-modules -j1 TARGET_PRODUCT=aosp_cf_x86_64_phone TARGET_BUILD_VARIANT=userdebug ALLOW_MISSING_DEPENDENCIES=true BUILD_BROKEN_DISABLE_BAZEL=1 nothing
+        ./prebuilts/build-tools/linux-x86/bin/ninja -f out/combined-aosp_cf_x86_64_phone.ninja -t commands superimage > superimage.sh
+        grep 'missing dependencies' superimage.sh
+        gzip superimage.sh
         gzip out/soong/modules_deps.json
         df -h && du -ah -d1 out && du -ah -d1 out/soong
+
+    - name: Archive superimage
+      uses: actions/upload-artifact@v3
+      with:
+        name: superimage.sh.gz
+        path: |
+          superimage.sh.gz
 
     - name: Archive modules_deps
       uses: actions/upload-artifact@v3
