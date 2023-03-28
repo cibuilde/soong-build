@@ -292,7 +292,6 @@ jobs:
         rm -rf hardware/google/apf/
         rm -rf hardware/google/av/
         rm -rf hardware/google/easel/
-        rm -rf hardware/google/interfaces/
         rm -rf hardware/invensense/
         rm -rf hardware/knowles/athletico/sound_trigger_hal/
         rm -rf hardware/qcom/audio/
