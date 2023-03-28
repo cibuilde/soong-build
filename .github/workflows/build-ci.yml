@@ -21,15 +21,12 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: mkdir -p out/soong
-    - run: tar xf android12-gsi.tar.xz .
-    - run: ls -l
-    - run: ./soong_build --top `pwd` --out "out/soong" -n "out" -d "out/soong/build.ninja.d" -l ./Android.bp.list --available_env ./soong.environment.used Android.bp
-    - run: ls -l out/soong
+    - run: ./clone_repo
+    - run: tar xf android12-gsi.tar.gz -C aosp --exclude="./out/"
 
-    - name: Archive output
+    - name: Archive repo
       uses: actions/upload-artifact@v3
       with:
-        name: modules_deps.json
+        name: android12-gsi
         path: |
-          out/soong/modules_deps.json
+          android12-gsi.tar.gz
