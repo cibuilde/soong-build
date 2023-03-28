@@ -16,11 +16,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+    - uses: actions/setup-python@v4
       with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        python-version: "2.7"
 
     - name: Restore Cache android12-gsi.tar.xz
       id: android12-gsi
@@ -44,7 +42,9 @@ jobs:
         pushd aosp
         export TOP=$(pwd)
         git -C prebuilts/build-tools/ sparse-checkout set --no-cone '/*' '!/*/' 'linux-x86/bin' 'linux-x86/lib64' 'path' 'common'
-        git -C device/google/cuttlefish/ sparse-checkout set --no-cone '/*' '!/*/'
+        git -C prebuilts/build-tools/ sparse-checkout reapply
+        git -C device/google/cuttlefish/ sparse-checkout set --no-cone '/*'
+        git -C device/google/cuttlefish/ sparse-checkout reapply
         cp build/make/core/root.mk Makefile
         ln -sf make/CleanSpec.mk build/ && ln -sf make/core build/
         ln -sf make/target build/ && ln -sf make/tools build/
@@ -59,7 +59,7 @@ jobs:
         ln -sf $GITHUB_WORKSPACE/soong_build out/soong/.bootstrap/bin
         ln -sf $GITHUB_WORKSPACE/bpglob out/soong/.minibootstrap
         cp $GITHUB_WORKSPACE/ckati prebuilts/build-tools/linux-x86/bin
-        GOROOT=`pwd`/prebuilts/go/linux-x86 TOP=`pwd` out/soong_ui --make-mode --skip-ninja --skip-soong-tests --skip-write-modules -j1 TARGET_PRODUCT=aosp_cf_x86_64_phone TARGET_BUILD_VARIANT=userdebug ALLOW_MISSING_DEPENDENCIES=true BUILD_BROKEN_DISABLE_BAZEL=1 nothing
+        GOROOT=`pwd`/prebuilts/go/linux-x86 TOP=`pwd` $GITHUB_WORKSPACE/soong_ui --make-mode --skip-ninja --skip-soong-tests --skip-write-modules -j1 TARGET_PRODUCT=aosp_cf_x86_64_phone TARGET_BUILD_VARIANT=userdebug ALLOW_MISSING_DEPENDENCIES=true BUILD_BROKEN_DISABLE_BAZEL=1 nothing
         df -h
 
     - name: Archive repo
