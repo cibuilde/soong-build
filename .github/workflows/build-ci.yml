@@ -6,13 +6,9 @@ name: Android Soong build CI
 on: [ push ]
 
 jobs:
-  download:
+  cf_builder:
 
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16.x]
 
     steps:
     - uses: actions/checkout@v3
@@ -43,8 +39,10 @@ jobs:
         export TOP=$(pwd)
         git -C prebuilts/build-tools/ sparse-checkout set --no-cone '/*' '!/*/' 'linux-x86/bin' 'linux-x86/lib64' 'path' 'common'
         git -C prebuilts/build-tools/ sparse-checkout reapply
+        git -C prebuilts/build-tools/ reset --hard HEAD
         git -C device/google/cuttlefish/ sparse-checkout set --no-cone '/*'
         git -C device/google/cuttlefish/ sparse-checkout reapply
+        git -C prebuilts/build-tools/ reset --hard HEAD
         cp build/make/core/root.mk Makefile
         ln -sf make/CleanSpec.mk build/ && ln -sf make/core build/
         ln -sf make/target build/ && ln -sf make/tools build/
