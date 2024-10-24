@@ -11,23 +11,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
       with:
+        # Semantic version range syntax or exact version of a Python version
+        #python-version: '3.x'
         python-version: "2.7"
+        # Optional - x64 or x86 architecture, defaults to x64
+        architecture: 'x64'
 
-    - name: Restore Cache android12-gsi.tar.xz
-      id: android12-gsi
-      uses: actions/cache@v3
+    - name: Setup Go 1.21.x
+      uses: actions/setup-go@v5
       with:
-        path: android12-gsi.tar.xz
-        key: android12-gsi
-        restore-keys: android12-gsi
-    - name: Clone repo
-      if: steps.android12-gsi.outputs.cache-hit != 'true'
-      run: |
-         ./clone_repo
-         tar --exclude="./out/" -caf android12-gsi.tar.xz -C aosp .
+        # Semantic version range syntax or exact version of Go
+        go-version: '1.21.x'
+
     - name: Extract tar
       if: steps.android12-gsi.outputs.cache-hit == 'true'
       run: |
@@ -473,57 +472,58 @@ jobs:
         rm -rf tools/tradefederation/prebuilts/
         rm -rf tools/treble/
         rm -rf tools/trebuchet/
+
         git -C prebuilts/build-tools/ sparse-checkout set --no-cone '/*' '!/*/' 'linux-x86/bin' 'linux-x86/lib64' 'path' 'common'
         git -C prebuilts/build-tools/ sparse-checkout reapply
         git -C prebuilts/build-tools/ reset --hard HEAD
+
         git -C device/google/cuttlefish/ sparse-checkout set --no-cone '/*'
         git -C device/google/cuttlefish/ sparse-checkout reapply
-        git -C prebuilts/build-tools/ reset --hard HEAD
+
         git clone --filter=tree:0 --single-branch --no-tags --sparse --depth=1 https://android.googlesource.com/platform/prebuilts/clang-tools -b android12-gsi prebuilts/clang-tools
         git -C prebuilts/clang-tools/ sparse-checkout set --no-cone '/*' '!/*/' 'linux-x86/bin' 'linux-x86/clang-headers' 'linux-x86/lib64/clang'
         git -C prebuilts/clang-tools/ reset --hard HEAD
+
         cp build/make/core/root.mk Makefile
         ln -sf make/CleanSpec.mk build/ && ln -sf make/core build/
         ln -sf make/target build/ && ln -sf make/tools build/
         ln -sf build/soong/root.bp Android.bp
+
         mkdir -p prebuilts/jdk && touch prebuilts/jdk/.find-ignore
         mkdir -p prebuilts/jdk/jdk8 && mkdir -p prebuilts/jdk/jdk11
         ln -sf $JAVA_HOME_8_X64 prebuilts/jdk/jdk8/linux-x86
         ln -sf $JAVA_HOME_11_X64 prebuilts/jdk/jdk11/linux-x86
+
         mkdir -p prebuilts/go && touch prebuilts/go/.find-ignore
-        ln -sf $GOROOT_1_19_X64 prebuilts/go/linux-x86
+        ln -sf $GOROOT prebuilts/go/linux-x86
+
         mkdir -p out/soong/.minibootstrap out/soong/.bootstrap/bin
         ln -sf $GITHUB_WORKSPACE/soong_build out/soong/.bootstrap/bin
         ln -sf $GITHUB_WORKSPACE/bpglob out/soong/.minibootstrap
+
         cp $GITHUB_WORKSPACE/ckati prebuilts/build-tools/linux-x86/bin
+
         sed -i 's/TARGET_ARCH_VARIANT := silvermont/TARGET_ARCH_VARIANT := x86_64/' device/google/cuttlefish/vsoc_x86_64/BoardConfig.mk
         sed -i 's/TARGET_2ND_ARCH_VARIANT := silvermont/TARGET_2ND_ARCH_VARIANT := x86_64/' device/google/cuttlefish/vsoc_x86_64/BoardConfig.mk
         sed -i 's/TARGET_2ND_CPU_VARIANT := silvermont/TARGET_2ND_CPU_VARIANT := x86/' device/google/cuttlefish/vsoc_x86_64/BoardConfig.mk
+
         GOROOT=`pwd`/prebuilts/go/linux-x86 TOP=`pwd` $GITHUB_WORKSPACE/soong_ui --make-mode --skip-ninja --skip-soong-tests --skip-write-modules -j1 TARGET_PRODUCT=aosp_cf_x86_64_phone TARGET_BUILD_VARIANT=userdebug ALLOW_MISSING_DEPENDENCIES=true BUILD_BROKEN_DISABLE_BAZEL=1 nothing
         ./prebuilts/build-tools/linux-x86/bin/ninja -f out/combined-aosp_cf_x86_64_phone.ninja -t commands superimage > superimage.sh
+
         grep 'missing dependencies' superimage.sh
         gzip superimage.sh
-        gzip out/soong/modules_deps.json
         df -h && du -ah -d1 out && du -ah -d1 out/soong
 
     - name: Archive superimage
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: superimage.sh.gz
         path: |
           superimage.sh.gz
 
-    - name: Archive modules_deps
-      uses: actions/upload-artifact@v3
+    - name: Archive out_dir
+      uses: actions/upload-artifact@v4
       with:
-        name: modules_deps.json.gz
+        name: out_dir
         path: |
-          aosp/out/soong/modules_deps.json
-
-    - name: Archive repo
-      uses: actions/upload-artifact@v3
-      with:
-        name: android12-gsi
-        path: |
-          android12-gsi.tar.xz
-
+          aosp/out
