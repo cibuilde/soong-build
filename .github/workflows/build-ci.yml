@@ -496,7 +496,7 @@ jobs:
         ln -sf $JAVA_HOME_11_X64 prebuilts/jdk/jdk11/linux-x86
 
         mkdir -p prebuilts/go && touch prebuilts/go/.find-ignore
-        ln -sf $GOROOT prebuilts/go/linux-x86
+        ln -sf `go env GOROOT` prebuilts/go/linux-x86
 
         mkdir -p out/soong/.minibootstrap out/soong/.bootstrap/bin
         ln -sf $GITHUB_WORKSPACE/soong_build out/soong/.bootstrap/bin
