@@ -28,8 +28,9 @@ jobs:
         go-version: '1.21.x'
 
     - name: Extract tar
-      if: steps.android12-gsi.outputs.cache-hit == 'true'
+      # if: steps.android12-gsi.outputs.cache-hit == 'true'
       run: |
+         curl -LJO https://github.com/cibuilde/soong-build/releases/download/android12-gsi/android12-gsi.tar.xz
          mkdir aosp && tar xf android12-gsi.tar.xz -C aosp
 
     - name: Start Soong
