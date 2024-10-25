@@ -505,7 +505,7 @@ jobs:
         ln -sf build/soong/root.bp Android.bp
 
         mkdir -p prebuilts/jdk && touch prebuilts/jdk/.find-ignore
-        #mkdir -p prebuilts/jdk/jdk8 && mkdir -p prebuilts/jdk/jdk11
+        mkdir -p prebuilts/jdk/jdk8 #&& mkdir -p prebuilts/jdk/jdk11
         ln -sf $JAVA_HOME_8_X64 prebuilts/jdk/jdk8/linux-x86
         #ln -sf $JAVA_HOME_11_X64 prebuilts/jdk/jdk11/linux-x86
         #git clone --filter=tree:0 --depth=1 --no-tags https://android.googlesource.com/platform/prebuilts/jdk/jdk11 -b android12-gsi prebuilts/jdk/jdk11/linux-x86
