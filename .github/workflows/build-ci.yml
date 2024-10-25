@@ -27,10 +27,21 @@ jobs:
         # Semantic version range syntax or exact version of Go
         go-version: '1.21.x'
 
-    - name: Extract tar
-      # if: steps.android12-gsi.outputs.cache-hit == 'true'
+    - name: Restore Cache android12-gsi.tar.xz
+      id: android12-gsi
+      uses: actions/cache@v3
+      with:
+        path: android12-gsi.tar.xz
+        key: android12-gsi
+        restore-keys: android12-gsi
+    - name: Clone repo
+      if: steps.android12-gsi.outputs.cache-hit != 'true'
       run: |
-         curl -LJO https://github.com/cibuilde/soong-build/releases/download/android12-gsi/android12-gsi.tar.xz
+         ./clone_repo
+         tar --exclude="./out/" -caf android12-gsi.tar.xz -C aosp .
+    - name: Extract tar
+      if: steps.android12-gsi.outputs.cache-hit == 'true'
+      run: |
          mkdir aosp && tar xf android12-gsi.tar.xz -C aosp
 
     - name: Start Soong
@@ -496,7 +507,7 @@ jobs:
         ln -sf $JAVA_HOME_11_X64 prebuilts/jdk/jdk11/linux-x86
 
         #mkdir -p prebuilts/go && touch prebuilts/go/.find-ignore
-        git clone --filter=tree:0 --depth=1 --no-tags https://android.googlesource.com/platform/prebuilts/go/linux-x86/ prebuilts/go/linux-x86
+        git clone --filter=tree:0 --depth=1 --no-tags https://android.googlesource.com/platform/prebuilts/go/linux-x86/ -b android12-gsi prebuilts/go/linux-x86
         #ln -sf `go env GOROOT` prebuilts/go/linux-x86
 
         mkdir -p out/soong/.minibootstrap out/soong/.bootstrap/bin
@@ -529,3 +540,10 @@ jobs:
         name: out_dir
         path: |
           aosp/out
+
+    - name: Archive repo
+      uses: actions/upload-artifact@v4
+      with:
+        name: android12-gsi
+        path: |
+          android12-gsi.tar.xz
