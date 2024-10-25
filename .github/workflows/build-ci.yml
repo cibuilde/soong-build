@@ -44,7 +44,7 @@ jobs:
       # if: steps.android12-gsi.outputs.cache-hit == 'true'
       run: |
          curl -LJO https://github.com/cibuilde/soong-build/releases/download/android12-gsi/android12-gsi.tar.xz
-         mkdir aosp && tar xf android12-gsi.tar.zst -C aosp
+         mkdir aosp && tar xf android12-gsi.tar.xz -C aosp
 
     - name: Start Soong
       run: |
