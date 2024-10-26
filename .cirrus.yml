@@ -5,7 +5,7 @@ container:
 
 task:
   script: |
-    apt install curl git
+    apt update && apt install -y curl git
     curl -LJO https://github.com/cibuilde/soong-build/releases/download/android12-gsi/android12-gsi.tar.xz
     ls -lh android12-gsi.tar.xz && mkdir aosp && tar xf android12-gsi.tar.xz -C aosp
 
