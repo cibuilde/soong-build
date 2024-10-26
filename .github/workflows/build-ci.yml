@@ -528,7 +528,7 @@ jobs:
         ln -sf $GITHUB_WORKSPACE/soong_build out/soong/.bootstrap/bin
         ln -sf $GITHUB_WORKSPACE/bpglob out/soong/.minibootstrap
 
-        cp $GITHUB_WORKSPACE/ckati prebuilts/build-tools/linux-x86/bin
+        #cp $GITHUB_WORKSPACE/ckati prebuilts/build-tools/linux-x86/bin
 
         sed -i 's/TARGET_ARCH_VARIANT := silvermont/TARGET_ARCH_VARIANT := x86_64/' device/google/cuttlefish/vsoc_x86_64/BoardConfig.mk
         sed -i 's/TARGET_2ND_ARCH_VARIANT := silvermont/TARGET_2ND_ARCH_VARIANT := x86_64/' device/google/cuttlefish/vsoc_x86_64/BoardConfig.mk
