@@ -55,13 +55,15 @@ jobs:
         rm -rf build/pesto/
         rm -rf bootable/libbootloader/
         rm -rf compatibility/cdd/
-        mv cts/libs/json .
+        mv cts/libs/json cts.libs.json
         rm -rf cts/
-        mkdir -p cts/libs && mv json cts/libs/json
+        mkdir -p cts/libs && mv cts.libs.json cts/libs/json
         rm -rf developers/build/
         rm -rf developers/demos/
         rm -rf developers/samples/android/
-        #rm -rf development/
+        mv development/sdk/ development.sdk
+        rm -rf development/
+        mkdir -p development && mv development.sdk development
         rm -rf device/generic/car/
         rm -rf device/generic/common/
         rm -rf device/linaro/dragonboard/
@@ -536,7 +538,32 @@ jobs:
 
         grep 'missing dependencies' superimage.sh
         gzip superimage.sh
+        gzip out/soong/build.ninja
+        gzip out/build-aosp_cf_x86_64_phone.ninja
+        tar -caf androidmk.tar.zst -C out/soong/androidmk .
+
         df -h && du -ah -d1 out && du -ah -d1 out/soong
+
+    - name: Archive androidmk.tar.zst
+      uses: actions/upload-artifact@v4
+      with:
+        name: androidmk.tar.zst
+        path: |
+          aosp/androidmk.tar.zst
+
+    - name: Archive soong build.ninja
+      uses: actions/upload-artifact@v4
+      with:
+        name: build.ninja.gz
+        path: |
+          aosp/build.ninja.gz
+
+    - name: Archive build-aosp_cf_x86_64_phone.ninja
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-aosp_cf_x86_64_phone.ninja.gz
+        path: |
+          aosp/build-aosp_cf_x86_64_phone.ninja.gz
 
     - name: Archive superimage
       uses: actions/upload-artifact@v4
