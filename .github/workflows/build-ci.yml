@@ -55,11 +55,11 @@ jobs:
         rm -rf build/pesto/
         rm -rf bootable/libbootloader/
         rm -rf compatibility/cdd/
-        rm -rf cts/
+        #rm -rf cts/
         rm -rf developers/build/
         rm -rf developers/demos/
         rm -rf developers/samples/android/
-        rm -rf development/
+        #rm -rf development/
         rm -rf device/generic/car/
         rm -rf device/generic/common/
         rm -rf device/linaro/dragonboard/
@@ -487,6 +487,8 @@ jobs:
         rm -rf tools/tradefederation/prebuilts/
         rm -rf tools/treble/
         rm -rf tools/trebuchet/
+
+        git clone --filter=tree:0 --depth=1 --no-tags https://android.googlesource.com/platform/external/cros/system_api -b android12-gsi external/cros/system_api
 
         git -C prebuilts/build-tools/ sparse-checkout set --no-cone '/*' '!/*/' 'linux-x86/bin' 'linux-x86/lib64' 'path' 'common'
         git -C prebuilts/build-tools/ sparse-checkout reapply
