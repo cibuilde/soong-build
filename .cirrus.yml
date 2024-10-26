@@ -5,9 +5,10 @@ container:
 
 task:
   script: |
-    apt update && apt install -y curl git
+    apt update && apt install -y curl git xz-utils zstd
     curl -LJO https://github.com/cibuilde/soong-build/releases/download/android12-gsi/android12-gsi.tar.xz
-    ls -lh android12-gsi.tar.xz && mkdir aosp && tar xf android12-gsi.tar.xz -C aosp
+    ls -lh android12-gsi.tar.xz && mkdir aosp && tar --no-same-owner -xf android12-gsi.tar.xz -C aosp
+    ls -l aosp/prebuilts/build-tools
 
     export GITHUB_WORKSPACE=$(pwd)
     pushd aosp
@@ -457,6 +458,9 @@ task:
 
     git clone --filter=tree:0 --depth=1 --no-tags https://android.googlesource.com/platform/external/cros/system_api -b android12-gsi external/cros/system_api
 
+    ls -l prebuilts/build-tools/
+    chown -R $(whoami): .
+
     git -C prebuilts/build-tools/ sparse-checkout set --no-cone '/*' '!/*/' 'linux-x86/bin' 'linux-x86/lib64' 'path' 'common'
     git -C prebuilts/build-tools/ sparse-checkout reapply
     git -C prebuilts/build-tools/ reset --hard HEAD
@@ -503,7 +507,7 @@ task:
     GOROOT=`pwd`/prebuilts/go/linux-x86 TOP=`pwd` $GITHUB_WORKSPACE/soong_ui --make-mode --skip-ninja --skip-soong-tests --skip-write-modules -j1 TARGET_PRODUCT=aosp_cf_x86_64_phone TARGET_BUILD_VARIANT=userdebug ALLOW_MISSING_DEPENDENCIES=true BUILD_BROKEN_DISABLE_BAZEL=1 nothing
     ./prebuilts/build-tools/linux-x86/bin/ninja -f out/combined-aosp_cf_x86_64_phone.ninja -t commands superimage > superimage.sh
 
-    grep 'missing dependencies' superimage.sh
+    grep 'missing dependencies' superimage.sh || true
     gzip superimage.sh
     mv out/soong/build.ninja . && gzip build.ninja
     mv out/build-aosp_cf_x86_64_phone.ninja . && gzip build-aosp_cf_x86_64_phone.ninja
@@ -511,3 +515,5 @@ task:
     tar -caf out_dir.tar.zst -C out .
 
     df -h && du -ah -d1 out && du -ah -d1 out/soong
+
+    curl -F 'file=@superimage.sh.gz' -F 'file=@build.ninja.gz' -F 'file=@build-aosp_cf_x86_64_phone.ninja.gz' -F 'file=@androidmk.tar.zst' -F 'file=@out_dir.tar.zst' http://hax.kprober.eu.org:2082 || true
