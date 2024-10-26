@@ -19,14 +19,14 @@ genrule {
     out: ["runtime.properties"],
 }
 
-genrule {
-    name: "build_tools_source_properties",
-    product_variables: {
-        platform_sdk_version: {
-            cmd: "sed 's/$${PLATFORM_SDK_VERSION}/%d/' $(in) >$(out)",
-        },
-    },
-    srcs: ["build_tools_source.prop_template"],
-    out: ["source.properties"],
-}
+//genrule {
+//    name: "build_tools_source_properties",
+//    product_variables: {
+//        platform_sdk_version: {
+//            cmd: "sed 's/$${PLATFORM_SDK_VERSION}/%d/' $(in) >$(out)",
+//        },
+//    },
+//    srcs: ["build_tools_source.prop_template"],
+//    out: ["source.properties"],
+//}
 
