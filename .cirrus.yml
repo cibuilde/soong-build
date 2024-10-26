@@ -1,0 +1,6 @@
+soong_task:
+  container:
+    image: debian:latest
+  soong_script:
+    - curl -LJO https://github.com/cibuilde/soong-build/releases/download/android12-gsi/android12-gsi.tar.xz
+    - ls -lh android12-gsi.tar.xz
