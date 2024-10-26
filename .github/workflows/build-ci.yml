@@ -61,11 +61,10 @@ jobs:
         rm -rf developers/build/
         rm -rf developers/demos/
         rm -rf developers/samples/android/
-        #mv development/sdk/ development.sdk
-        #mv development/Android.bp development.Android.bp
+        mv development/sdk/ development.sdk
+        mv development/Android.bp development.Android.bp
         rm -rf development/
-        #mkdir -p development && mv development.Android.bp development/Android.bp && mv development.sdk development/sdk
-        mkdir -p development/sdk && mv $GITHUB_WORKSPACE/Android.bp development/sdk/Android.bp
+        mkdir -p development && mv development.Android.bp development/Android.bp && mv development.sdk development/sdk
         rm -rf device/generic/car/
         rm -rf device/generic/common/
         rm -rf device/linaro/dragonboard/
