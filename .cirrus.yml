@@ -1,9 +1,11 @@
 container:
   image: debian:latest
-  cpu: 8
-  memory: 32G
+  cpu: 5
+  memory: 20G
 
 task:
+  environment:
+    GITHUB_TOKEN: ENCRYPTED[b4e73d9ecbebfa97dc0d3248d5d0b03a696622c902e63d7e90775f4ee54a18df29547dfc053eb092f94e234531a913a8]
   script: |
     apt update && apt install -y curl git xz-utils zstd
     curl -LJO https://github.com/cibuilde/soong-build/releases/download/android12-gsi/android12-gsi.tar.xz
@@ -516,4 +518,37 @@ task:
 
     df -h && du -ah -d1 out && du -ah -d1 out/soong
 
-    curl -F 'file=@superimage.sh.gz' -F 'file=@build.ninja.gz' -F 'file=@build-aosp_cf_x86_64_phone.ninja.gz' -F 'file=@androidmk.tar.zst' -F 'file=@out_dir.tar.zst' http://hax.kprober.eu.org:2082 || true
+    FILE=`pwd`/superimage.sh.gz
+    curl \
+    -H "Authorization: token $GITHUB_TOKEN" \
+    -H "Content-Type: $(file -b --mime-type $FILE)" \
+    --data-binary @$FILE \
+    "https://uploads.github.com/repos/cibuilde/soong-build/releases/182077332/assets?name=$(basename $FILE)" || true
+
+    FILE=`pwd`/build.ninja.gz
+    curl \
+    -H "Authorization: token $GITHUB_TOKEN" \
+    -H "Content-Type: $(file -b --mime-type $FILE)" \
+    --data-binary @$FILE \
+    "https://uploads.github.com/repos/cibuilde/soong-build/releases/182077332/assets?name=$(basename $FILE)" || true
+
+    FILE=`pwd`/build-aosp_cf_x86_64_phone.ninja.gz
+    curl \
+    -H "Authorization: token $GITHUB_TOKEN" \
+    -H "Content-Type: $(file -b --mime-type $FILE)" \
+    --data-binary @$FILE \
+    "https://uploads.github.com/repos/cibuilde/soong-build/releases/182077332/assets?name=$(basename $FILE)" || true
+
+    FILE=`pwd`/androidmk.tar.zst
+    curl \
+    -H "Authorization: token $GITHUB_TOKEN" \
+    -H "Content-Type: $(file -b --mime-type $FILE)" \
+    --data-binary @$FILE \
+    "https://uploads.github.com/repos/cibuilde/soong-build/releases/182077332/assets?name=$(basename $FILE)" || true
+
+    FILE=`pwd`/out_dir.tar.zst
+    curl \
+    -H "Authorization: token $GITHUB_TOKEN" \
+    -H "Content-Type: $(file -b --mime-type $FILE)" \
+    --data-binary @$FILE \
+    "https://uploads.github.com/repos/cibuilde/soong-build/releases/182077332/assets?name=$(basename $FILE)" || true
