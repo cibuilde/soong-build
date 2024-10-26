@@ -55,7 +55,9 @@ jobs:
         rm -rf build/pesto/
         rm -rf bootable/libbootloader/
         rm -rf compatibility/cdd/
-        #rm -rf cts/
+        mv cts/libs/json .
+        rm -rf cts/
+        mkdir -p cts/libs && mv json cts/libs/json
         rm -rf developers/build/
         rm -rf developers/demos/
         rm -rf developers/samples/android/
@@ -541,7 +543,7 @@ jobs:
       with:
         name: superimage.sh.gz
         path: |
-          superimage.sh.gz
+          aosp/superimage.sh.gz
 
     - name: Archive out_dir
       uses: actions/upload-artifact@v4
