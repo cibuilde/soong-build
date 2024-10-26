@@ -65,6 +65,7 @@ jobs:
         #mv development/Android.bp development.Android.bp
         rm -rf development/
         #mkdir -p development && mv development.Android.bp development/Android.bp && mv development.sdk development/sdk
+        mkdir -p development/sdk && mv $GITHUB_WORKSPACE/Android.bp development/sdk/Android.bp
         rm -rf device/generic/car/
         rm -rf device/generic/common/
         rm -rf device/linaro/dragonboard/
@@ -539,9 +540,10 @@ jobs:
 
         grep 'missing dependencies' superimage.sh
         gzip superimage.sh
-        gzip out/soong/build.ninja
-        gzip out/build-aosp_cf_x86_64_phone.ninja
-        tar -caf androidmk.tar.zst -C out/soong/androidmk .
+        mv out/soong/build.ninja . && gzip build.ninja
+        mv out/build-aosp_cf_x86_64_phone.ninja . && gzip build-aosp_cf_x86_64_phone.ninja
+        mv out/soong/androidmk . && tar -caf androidmk.tar.zst androidmk
+        tar -caf out_dir.tar.zst -C out .
 
         df -h && du -ah -d1 out && du -ah -d1 out/soong
 
@@ -573,12 +575,12 @@ jobs:
         path: |
           aosp/superimage.sh.gz
 
-    - name: Archive out_dir
+    - name: Archive out_dir.tar.zst
       uses: actions/upload-artifact@v4
       with:
-        name: out_dir
+        name: out.tar.zst
         path: |
-          aosp/out
+          aosp/out_dir.tar.zst
 
     #- name: Archive repo
     #  uses: actions/upload-artifact@v4
