@@ -7,7 +7,7 @@ task:
   environment:
     GITHUB_TOKEN: ENCRYPTED[b4e73d9ecbebfa97dc0d3248d5d0b03a696622c902e63d7e90775f4ee54a18df29547dfc053eb092f94e234531a913a8]
   script: |
-    apt update && apt install -y curl git xz-utils zstd
+    apt update && apt install -y curl git xz-utils zstd file
     curl -LJO https://github.com/cibuilde/soong-build/releases/download/android12-gsi/android12-gsi.tar.xz
     ls -lh android12-gsi.tar.xz && mkdir aosp && tar --no-same-owner -xf android12-gsi.tar.xz -C aosp
     ls -l aosp/prebuilts/build-tools
@@ -505,6 +505,8 @@ task:
     sed -i 's/TARGET_ARCH_VARIANT := silvermont/TARGET_ARCH_VARIANT := x86_64/' device/google/cuttlefish/vsoc_x86_64/BoardConfig.mk
     sed -i 's/TARGET_2ND_ARCH_VARIANT := silvermont/TARGET_2ND_ARCH_VARIANT := x86_64/' device/google/cuttlefish/vsoc_x86_64/BoardConfig.mk
     sed -i 's/TARGET_2ND_CPU_VARIANT := silvermont/TARGET_2ND_CPU_VARIANT := x86/' device/google/cuttlefish/vsoc_x86_64/BoardConfig.mk
+
+    lscpu
 
     GOROOT=`pwd`/prebuilts/go/linux-x86 TOP=`pwd` $GITHUB_WORKSPACE/soong_ui --make-mode --skip-ninja --skip-soong-tests --skip-write-modules -j1 TARGET_PRODUCT=aosp_cf_x86_64_phone TARGET_BUILD_VARIANT=userdebug ALLOW_MISSING_DEPENDENCIES=true BUILD_BROKEN_DISABLE_BAZEL=1 nothing
     ./prebuilts/build-tools/linux-x86/bin/ninja -f out/combined-aosp_cf_x86_64_phone.ninja -t commands superimage > superimage.sh
