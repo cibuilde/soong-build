@@ -10,7 +10,7 @@ task:
     apt update && apt install -y curl git xz-utils zstd file
     curl -LJO https://github.com/cibuilde/soong-build/releases/download/android12-gsi/android12-gsi.tar.xz
     ls -lh android12-gsi.tar.xz && mkdir aosp && tar --no-same-owner -xf android12-gsi.tar.xz -C aosp
-    ls -l aosp/prebuilts/build-tools
+    #ls -l aosp/prebuilts/build-tools
 
     export GITHUB_WORKSPACE=$(pwd)
     pushd aosp
@@ -509,7 +509,7 @@ task:
     sed -i 's/$(call build-license-metadata)/#$(call build-license-metadata)/' build/make/core/main.mk
     sed -i 's/include $(KATI_PACKAGE_MK_DIR)\/dist.mk/#include $(KATI_PACKAGE_MK_DIR)\/dist.mk/' build/make/packaging/distdir.mk
 
-    cat /proc/cpuinfo
+    #cat /proc/cpuinfo
 
     GOROOT=`pwd`/prebuilts/go/linux-x86 TOP=`pwd` $GITHUB_WORKSPACE/soong_ui --make-mode --skip-ninja --skip-soong-tests --skip-write-modules -j1 TARGET_PRODUCT=aosp_cf_x86_64_phone TARGET_BUILD_VARIANT=userdebug ALLOW_MISSING_DEPENDENCIES=true BUILD_BROKEN_DISABLE_BAZEL=1 nothing
     ./prebuilts/build-tools/linux-x86/bin/ninja -f out/combined-aosp_cf_x86_64_phone.ninja -t commands superimage > superimage.sh
@@ -528,32 +528,32 @@ task:
     -H "Authorization: token $GITHUB_TOKEN" \
     -H "Content-Type: $(file -b --mime-type $FILE)" \
     --data-binary @$FILE \
-    "https://uploads.github.com/repos/cibuilde/soong-build/releases/182077332/assets?name=$(basename $FILE)" || true
+    "https://uploads.github.com/repos/cibuilde/soong-build/releases/182392796/assets?name=$(basename $FILE)" || true
 
     FILE=`pwd`/build.ninja.gz
     curl \
     -H "Authorization: token $GITHUB_TOKEN" \
     -H "Content-Type: $(file -b --mime-type $FILE)" \
     --data-binary @$FILE \
-    "https://uploads.github.com/repos/cibuilde/soong-build/releases/182077332/assets?name=$(basename $FILE)" || true
+    "https://uploads.github.com/repos/cibuilde/soong-build/releases/182392796/assets?name=$(basename $FILE)" || true
 
     FILE=`pwd`/build-aosp_cf_x86_64_phone.ninja.gz
     curl \
     -H "Authorization: token $GITHUB_TOKEN" \
     -H "Content-Type: $(file -b --mime-type $FILE)" \
     --data-binary @$FILE \
-    "https://uploads.github.com/repos/cibuilde/soong-build/releases/182077332/assets?name=$(basename $FILE)" || true
+    "https://uploads.github.com/repos/cibuilde/soong-build/releases/182392796/assets?name=$(basename $FILE)" || true
 
     FILE=`pwd`/androidmk.tar.zst
     curl \
     -H "Authorization: token $GITHUB_TOKEN" \
     -H "Content-Type: $(file -b --mime-type $FILE)" \
     --data-binary @$FILE \
-    "https://uploads.github.com/repos/cibuilde/soong-build/releases/182077332/assets?name=$(basename $FILE)" || true
+    "https://uploads.github.com/repos/cibuilde/soong-build/releases/182392796/assets?name=$(basename $FILE)" || true
 
     FILE=`pwd`/out_dir.tar.zst
     curl \
     -H "Authorization: token $GITHUB_TOKEN" \
     -H "Content-Type: $(file -b --mime-type $FILE)" \
     --data-binary @$FILE \
-    "https://uploads.github.com/repos/cibuilde/soong-build/releases/182077332/assets?name=$(basename $FILE)" || true
+    "https://uploads.github.com/repos/cibuilde/soong-build/releases/182392796/assets?name=$(basename $FILE)" || true
