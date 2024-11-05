@@ -508,6 +508,7 @@ task:
     sed -i 's/.PHONY: sync syncsys/.PHONY: fullsystem\nfullsystem: $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_ROOT_FILES) $(SYSTEM_LINKER_CONFIG)\n\n.PHONY: sync syncsys/' build/make/core/Makefile
     sed -i 's/$(call build-license-metadata)/#$(call build-license-metadata)/' build/make/core/main.mk
     sed -i 's/include $(KATI_PACKAGE_MK_DIR)\/dist.mk/#include $(KATI_PACKAGE_MK_DIR)\/dist.mk/' build/make/packaging/distdir.mk
+    sed -i 's/include $(BUILD_NOTICE_FILE)/#include $(BUILD_NOTICE_FILE)/' build/make/core/base_rules.mk
 
     #cat /proc/cpuinfo
 
