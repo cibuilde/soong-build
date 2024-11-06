@@ -523,6 +523,39 @@ task:
     +#$(symbolic_output) : $(symbolic_input)
     +#	@echo "target Symbolic: $(PRIVATE_MODULE) ($@)"
     +#	$(copy-file-to-target)
+     
+     ###########################################################
+     ## Store breakpad symbols
+    EOF
+    patch -p1 << 'EOF'
+    --- a/build/make/core/soong_cc_prebuilt.mk
+    +++ b/build/make/core/soong_cc_prebuilt.mk
+    @@ -148,17 +148,17 @@ endif
+     # prebuilt directories where the linker can load their dependencies using
+     # relative RUNPATHs.
+     $(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)
+    -ifeq ($(LOCAL_IS_HOST_MODULE) $(if $(filter EXECUTABLES SHARED_LIBRARIES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),true,),true true)
+    -	$(copy-or-link-prebuilt-to-target)
+    -  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+    -	[ -x $@ ] || ( $(call echo-error,$@,Target of symlink is not executable); false )
+    -  endif
+    -else
+    -	$(transform-prebuilt-to-target)
+    -  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+    -	$(hide) chmod +x $@
+    -  endif
+    -endif
+    +#ifeq ($(LOCAL_IS_HOST_MODULE) $(if $(filter EXECUTABLES SHARED_LIBRARIES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),true,),true true)
+    +#	$(copy-or-link-prebuilt-to-target)
+    +#  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+    +#	[ -x $@ ] || ( $(call echo-error,$@,Target of symlink is not executable); false )
+    +#  endif
+    +#else
+    +#	$(transform-prebuilt-to-target)
+    +#  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+    +#	$(hide) chmod +x $@
+    +#  endif
+    +#endif
     EOF
 
     #cat /proc/cpuinfo
