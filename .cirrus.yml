@@ -510,7 +510,7 @@ task:
     sed -i 's/include $(KATI_PACKAGE_MK_DIR)\/dist.mk/#include $(KATI_PACKAGE_MK_DIR)\/dist.mk/' build/make/packaging/distdir.mk
     sed -i 's/include $(BUILD_NOTICE_FILE)/#include $(BUILD_NOTICE_FILE)/' build/make/core/base_rules.mk
     sed -i 's/$(eval $(call copy-one-file,$(LOCAL_SOONG_UNSTRIPPED_BINARY),$(symbolic_output)))/#$(eval $(call copy-one-file,$(LOCAL_SOONG_UNSTRIPPED_BINARY),$(symbolic_output)))/' build/make/core/soong_cc_prebuilt.mk
-    sed -i 's/$(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)/#$(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)/' build/make/core/soong_cc_prebuilt.mk
+    #sed -i 's/$(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)/#$(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)/' build/make/core/soong_cc_prebuilt.mk
     patch -p1 << 'EOF'
     --- a/build/make/core/dynamic_binary.mk
     +++ b/build/make/core/dynamic_binary.mk
@@ -528,36 +528,25 @@ task:
      ###########################################################
      ## Store breakpad symbols
     EOF
-    #patch -p1 << 'EOF'
-    #--- a/build/make/core/soong_cc_prebuilt.mk
-    #+++ b/build/make/core/soong_cc_prebuilt.mk
-    #@@ -148,17 +148,17 @@ endif
-    # # prebuilt directories where the linker can load their dependencies using
-    # # relative RUNPATHs.
-    # $(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)
-    #-ifeq ($(LOCAL_IS_HOST_MODULE) $(if $(filter EXECUTABLES SHARED_LIBRARIES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),true,),true true)
-    #-	$(copy-or-link-prebuilt-to-target)
-    #-  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
-    #-	[ -x $@ ] || ( $(call echo-error,$@,Target of symlink is not executable); false )
-    #-  endif
-    #-else
-    #-	$(transform-prebuilt-to-target)
-    #-  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
-    #-	$(hide) chmod +x $@
-    #-  endif
-    #-endif
-    #+#ifeq ($(LOCAL_IS_HOST_MODULE) $(if $(filter EXECUTABLES SHARED_LIBRARIES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),true,),true true)
-    #+#	$(copy-or-link-prebuilt-to-target)
-    #+#  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
-    #+#	[ -x $@ ] || ( $(call echo-error,$@,Target of symlink is not executable); false )
-    #+#  endif
-    #+#else
-    #+#	$(transform-prebuilt-to-target)
-    #+#  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
-    #+#	$(hide) chmod +x $@
-    #+#  endif
-    #+#endif
-    #EOF
+    patch -p1 << 'EOF'
+    --- a/build/make/core/soong_cc_prebuilt.mk
+    +++ b/build/make/core/soong_cc_prebuilt.mk
+    @@ -153,11 +153,11 @@ ifeq ($(LOCAL_IS_HOST_MODULE) $(if $(filter EXECUTABLES SHARED_LIBRARIES NATIVE_
+       ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+        [ -x $@ ] || ( $(call echo-error,$@,Target of symlink is not executable); false )
+       endif
+    -else
+    -	$(transform-prebuilt-to-target)
+    -  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+    -	$(hide) chmod +x $@
+    -  endif
+    +#else
+    +#	$(transform-prebuilt-to-target)
+    +#  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+    +#	$(hide) chmod +x $@
+    +#  endif
+     endif
+    EOF
 
     #cat /proc/cpuinfo
 
