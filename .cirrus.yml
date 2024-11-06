@@ -509,6 +509,24 @@ task:
     sed -i 's/$(call build-license-metadata)/#$(call build-license-metadata)/' build/make/core/main.mk
     sed -i 's/include $(KATI_PACKAGE_MK_DIR)\/dist.mk/#include $(KATI_PACKAGE_MK_DIR)\/dist.mk/' build/make/packaging/distdir.mk
     sed -i 's/include $(BUILD_NOTICE_FILE)/#include $(BUILD_NOTICE_FILE)/' build/make/core/base_rules.mk
+    sed -i 's/$(eval $(call copy-one-file,$(LOCAL_SOONG_UNSTRIPPED_BINARY),$(symbolic_output)))/#$(eval $(call copy-one-file,$(LOCAL_SOONG_UNSTRIPPED_BINARY),$(symbolic_output)))/' build/make/core/soong_cc_prebuilt.mk
+    patch -p1 << 'EOF'
+--- a/build/make/core/dynamic_binary.mk
++++ b/build/make/core/dynamic_binary.mk
+@@ -60,9 +60,9 @@ my_unstripped_path := $(LOCAL_UNSTRIPPED_PATH)
+ endif
+ symbolic_input := $(inject_module)
+ symbolic_output := $(my_unstripped_path)/$(my_installed_module_stem)
+-$(symbolic_output) : $(symbolic_input)
+-	@echo "target Symbolic: $(PRIVATE_MODULE) ($@)"
+-	$(copy-file-to-target)
++#$(symbolic_output) : $(symbolic_input)
++#	@echo "target Symbolic: $(PRIVATE_MODULE) ($@)"
++#	$(copy-file-to-target)
+ 
+ ###########################################################
+ ## Store breakpad symbols
+EOF
 
     #cat /proc/cpuinfo
 
