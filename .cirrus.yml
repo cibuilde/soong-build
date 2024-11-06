@@ -507,9 +507,11 @@ task:
 
     sed -i 's/.PHONY: sync syncsys/.PHONY: fullsystem\nfullsystem: $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_ROOT_FILES) $(SYSTEM_LINKER_CONFIG)\n\n.PHONY: sync syncsys/' build/make/core/Makefile
     sed -i 's/$(call build-license-metadata)/#$(call build-license-metadata)/' build/make/core/main.mk
+    sed -i 's/subdir_makefiles := $(SOONG_ANDROID_MK) $(file <$(OUT_DIR)\/.module_paths\/Android.mk.list) $(SOONG_OUT_DIR)\/late-$(TARGET_PRODUCT).mk/subdir_makefiles := $(SOONG_ANDROID_MK) $(file <$(OUT_DIR)\/.module_paths\/Android.mk.list) #$(SOONG_OUT_DIR)\/late-$(TARGET_PRODUCT).mk/' build/make/core/main.mk
     sed -i 's/include $(KATI_PACKAGE_MK_DIR)\/dist.mk/#include $(KATI_PACKAGE_MK_DIR)\/dist.mk/' build/make/packaging/distdir.mk
     sed -i 's/include $(BUILD_NOTICE_FILE)/#include $(BUILD_NOTICE_FILE)/' build/make/core/base_rules.mk
     sed -i 's/$(eval $(call copy-one-file,$(LOCAL_SOONG_UNSTRIPPED_BINARY),$(symbolic_output)))/#$(eval $(call copy-one-file,$(LOCAL_SOONG_UNSTRIPPED_BINARY),$(symbolic_output)))/' build/make/core/soong_cc_prebuilt.mk
+    sed -i 's/$(LOCAL_BUILT_MODULE): | $(symbolic_output)/#$(LOCAL_BUILT_MODULE): | $(symbolic_output)/' build/make/core/soong_cc_prebuilt.mk
     patch -p1 << 'EOF'
     --- a/build/make/core/dynamic_binary.mk
     +++ b/build/make/core/dynamic_binary.mk
@@ -526,6 +528,15 @@ task:
      
      ###########################################################
      ## Store breakpad symbols
+    @@ -93,7 +93,7 @@ strip_output := $(LOCAL_BUILT_MODULE)
+     # Use an order-only dependency to ensure the unstripped file in the symbols
+     # directory is copied when the module is built, but does not force the
+     # module to be rebuilt when the symbols directory is cleaned by installclean.
+    -$(strip_output): | $(symbolic_output)
+    +#$(strip_output): | $(symbolic_output)
+     
+     my_strip_module := $(firstword \
+       $(LOCAL_STRIP_MODULE_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) \
     EOF
 
     #cat /proc/cpuinfo
