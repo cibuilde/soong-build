@@ -505,13 +505,35 @@ task:
     sed -i 's/TARGET_2ND_ARCH_VARIANT := silvermont/TARGET_2ND_ARCH_VARIANT := x86_64/' device/google/cuttlefish/vsoc_x86_64/BoardConfig.mk
     sed -i 's/TARGET_2ND_CPU_VARIANT := silvermont/TARGET_2ND_CPU_VARIANT := x86/' device/google/cuttlefish/vsoc_x86_64/BoardConfig.mk
 
-    sed -i 's/.PHONY: sync syncsys/.PHONY: fullsystem\nfullsystem: $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_ROOT_FILES) $(SYSTEM_LINKER_CONFIG)\n\n.PHONY: sync syncsys/' build/make/core/Makefile
     sed -i 's/$(call build-license-metadata)/#$(call build-license-metadata)/' build/make/core/main.mk
     sed -i 's/subdir_makefiles := $(SOONG_ANDROID_MK) $(file <$(OUT_DIR)\/.module_paths\/Android.mk.list) $(SOONG_OUT_DIR)\/late-$(TARGET_PRODUCT).mk/subdir_makefiles := $(SOONG_ANDROID_MK) $(file <$(OUT_DIR)\/.module_paths\/Android.mk.list) #$(SOONG_OUT_DIR)\/late-$(TARGET_PRODUCT).mk/' build/make/core/main.mk
     sed -i 's/include $(KATI_PACKAGE_MK_DIR)\/dist.mk/#include $(KATI_PACKAGE_MK_DIR)\/dist.mk/' build/make/packaging/distdir.mk
     sed -i 's/include $(BUILD_NOTICE_FILE)/#include $(BUILD_NOTICE_FILE)/' build/make/core/base_rules.mk
     sed -i 's/$(eval $(call copy-one-file,$(LOCAL_SOONG_UNSTRIPPED_BINARY),$(symbolic_output)))/#$(eval $(call copy-one-file,$(LOCAL_SOONG_UNSTRIPPED_BINARY),$(symbolic_output)))/' build/make/core/soong_cc_prebuilt.mk
     sed -i 's/$(LOCAL_BUILT_MODULE): | $(symbolic_output)/#$(LOCAL_BUILT_MODULE): | $(symbolic_output)/' build/make/core/soong_cc_prebuilt.mk
+
+    patch -p1 << 'EOF'
+    --- a/build/make/core/Makefile
+    +++ b/build/make/core/Makefile
+    @@ -2846,6 +2846,18 @@ endif
+     
+     endif # BUILDING_SYSTEM_IMAGE
+     
+    +.PHONY: fullimagefiles
+    +fullimagefiles: $(INTERNAL_SYSTEMIMAGE_FILES) \
+    +	$(INTERNAL_SYSTEM_EXTIMAGE_FILES) \
+    +	$(INTERNAL_SYSTEMOTHERIMAGE_FILES) \
+    +	$(INTERNAL_VENDORIMAGE_FILES) \
+    +	$(INTERNAL_VENDOR_DLKMIMAGE_FILES) \
+    +	$(INTERNAL_PRODUCTIMAGE_FILES) \
+    +	$(INTERNAL_ODMIMAGE_FILES) \
+    +    $(INTERNAL_ODM_DLKMIMAGE_FILES) \
+    +	$(INTERNAL_ROOT_FILES) \
+    +	$(SYSTEM_LINKER_CONFIG)
+    +
+     .PHONY: sync syncsys
+     sync syncsys: $(INTERNAL_SYSTEMIMAGE_FILES)
+    EOF
     patch -p1 << 'EOF'
     --- a/build/make/core/dynamic_binary.mk
     +++ b/build/make/core/dynamic_binary.mk
