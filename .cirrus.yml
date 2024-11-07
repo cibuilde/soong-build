@@ -515,24 +515,25 @@ task:
     patch -p1 << 'EOF'
     --- a/build/make/core/Makefile
     +++ b/build/make/core/Makefile
-    @@ -2846,6 +2846,18 @@ endif
-     
-     endif # BUILDING_SYSTEM_IMAGE
-     
-    +.PHONY: fullimagefiles
-    +fullimagefiles: $(INTERNAL_SYSTEMIMAGE_FILES) \
+    @@ -6124,3 +6124,18 @@ $(call dist-for-goals,haiku,$(SOONG_FUZZ_PACKAGING_ARCH_MODULES))
+     .PHONY: haiku-rust
+     haiku-rust: $(SOONG_RUST_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_RUST_FUZZ_TARGETS)
+     $(call dist-for-goals,haiku-rust,$(SOONG_RUST_FUZZ_PACKAGING_ARCH_MODULES))
+    +
+    +.PHONY: fullsystem
+    +fullsystem: $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_ROOT_FILES) $(SYSTEM_LINKER_CONFIG)
+    +
+    +.PHONY: fullimages
+    +fullimages: $(INTERNAL_SYSTEMIMAGE_FILES) \
     +	$(INTERNAL_SYSTEM_EXTIMAGE_FILES) \
     +	$(INTERNAL_SYSTEMOTHERIMAGE_FILES) \
     +	$(INTERNAL_VENDORIMAGE_FILES) \
     +	$(INTERNAL_VENDOR_DLKMIMAGE_FILES) \
     +	$(INTERNAL_PRODUCTIMAGE_FILES) \
     +	$(INTERNAL_ODMIMAGE_FILES) \
-    +    $(INTERNAL_ODM_DLKMIMAGE_FILES) \
+    +	$(INTERNAL_ODM_DLKMIMAGE_FILES) \
     +	$(INTERNAL_ROOT_FILES) \
     +	$(SYSTEM_LINKER_CONFIG)
-    +
-     .PHONY: sync syncsys
-     sync syncsys: $(INTERNAL_SYSTEMIMAGE_FILES)
     EOF
     patch -p1 << 'EOF'
     --- a/build/make/core/dynamic_binary.mk
