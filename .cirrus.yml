@@ -515,11 +515,10 @@ task:
     patch -p1 << 'EOF'
     --- a/build/make/core/Makefile
     +++ b/build/make/core/Makefile
-    @@ -6124,3 +6124,18 @@ $(call dist-for-goals,haiku,$(SOONG_FUZZ_PACKAGING_ARCH_MODULES))
-     .PHONY: haiku-rust
-     haiku-rust: $(SOONG_RUST_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_RUST_FUZZ_TARGETS)
-     $(call dist-for-goals,haiku-rust,$(SOONG_RUST_FUZZ_PACKAGING_ARCH_MODULES))
-    +
+    @@ -5727,6 +5727,21 @@ droidcore-unbundled: $(INSTALLED_SUPERIMAGE_TARGET)
+     .PHONY: superimage
+     superimage: $(INSTALLED_SUPERIMAGE_TARGET)
+     
     +.PHONY: fullsystem
     +fullsystem: $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_ROOT_FILES) $(SYSTEM_LINKER_CONFIG)
     +
@@ -534,6 +533,9 @@ task:
     +	$(INTERNAL_ODM_DLKMIMAGE_FILES) \
     +	$(INTERNAL_ROOT_FILES) \
     +	$(SYSTEM_LINKER_CONFIG)
+    +
+     $(call dist-for-goals,dist_files,$(INSTALLED_MISC_INFO_TARGET):super_misc_info.txt)
+     endif # BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT
     EOF
     patch -p1 << 'EOF'
     --- a/build/make/core/dynamic_binary.mk
