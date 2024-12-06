@@ -504,6 +504,7 @@ task:
     sed -i 's/TARGET_ARCH_VARIANT := silvermont/TARGET_ARCH_VARIANT := x86_64/' device/google/cuttlefish/vsoc_x86_64/BoardConfig.mk
     sed -i 's/TARGET_2ND_ARCH_VARIANT := silvermont/TARGET_2ND_ARCH_VARIANT := x86_64/' device/google/cuttlefish/vsoc_x86_64/BoardConfig.mk
     sed -i 's/TARGET_2ND_CPU_VARIANT := silvermont/TARGET_2ND_CPU_VARIANT := x86/' device/google/cuttlefish/vsoc_x86_64/BoardConfig.mk
+    sed -i 's/BOARD_GPU_DRIVERS := virgl/BOARD_GPU_DRIVERS := virgl i965/' device/google/cuttlefish/shared/BoardConfig.mk
 
     sed -i 's/$(call build-license-metadata)/#$(call build-license-metadata)/' build/make/core/main.mk
     sed -i 's/subdir_makefiles := $(SOONG_ANDROID_MK) $(file <$(OUT_DIR)\/.module_paths\/Android.mk.list) $(SOONG_OUT_DIR)\/late-$(TARGET_PRODUCT).mk/subdir_makefiles := $(SOONG_ANDROID_MK) $(file <$(OUT_DIR)\/.module_paths\/Android.mk.list) #$(SOONG_OUT_DIR)\/late-$(TARGET_PRODUCT).mk/' build/make/core/main.mk
