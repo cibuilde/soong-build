@@ -8,8 +8,20 @@ task:
     GITHUB_TOKEN: ENCRYPTED[b4e73d9ecbebfa97dc0d3248d5d0b03a696622c902e63d7e90775f4ee54a18df29547dfc053eb092f94e234531a913a8]
   script: |
     apt update && apt install -y curl git xz-utils zstd file
-    curl -LJO https://github.com/cibuilde/soong-build/releases/download/android12-gsi/android12-gsi.tar.xz
-    ls -lh android12-gsi.tar.xz && mkdir aosp && tar --no-same-owner -xf android12-gsi.tar.xz -C aosp
+    ./clone_repo android12-gsi android12-gsi.xml
+
+    tar -caf android12-gsi.tar.zst -C aosp .
+    ls -lh
+
+    FILE=`pwd`/android12-gsi.tar.zst
+    curl \
+    -H "Authorization: token $GITHUB_TOKEN" \
+    -H "Content-Type: $(file -b --mime-type $FILE)" \
+    --data-binary @$FILE \
+    "https://uploads.github.com/repos/cibuilde/soong-build/releases/98812134/assets?name=$(basename $FILE)" || true
+
+    #curl -LJO https://github.com/cibuilde/soong-build/releases/download/android12-gsi/android12-gsi.tar.xz
+    #ls -lh android12-gsi.tar.xz && mkdir aosp && tar --no-same-owner -xf android12-gsi.tar.xz -C aosp
     #ls -l aosp/prebuilts/build-tools
 
     export GITHUB_WORKSPACE=$(pwd)
@@ -462,6 +474,10 @@ task:
 
     #chown -R $(whoami): .
 
+    git -C build/make/ sparse-checkout set --no-cone '/*'
+    git -C build/make/ sparse-checkout reapply
+    git -C build/make/ reset --hard HEAD
+
     git -C prebuilts/build-tools/ sparse-checkout set --no-cone '/*' '!/*/' 'linux-x86/bin' 'linux-x86/lib64' 'path' 'common'
     git -C prebuilts/build-tools/ sparse-checkout reapply
     git -C prebuilts/build-tools/ reset --hard HEAD
@@ -567,7 +583,7 @@ task:
 
     #cat /proc/cpuinfo
 
-    GOROOT=`pwd`/prebuilts/go/linux-x86 TOP=`pwd` $GITHUB_WORKSPACE/soong_ui --make-mode --skip-ninja --skip-soong-tests --skip-write-modules -j1 TARGET_PRODUCT=aosp_cf_x86_64_phone TARGET_BUILD_VARIANT=userdebug ALLOW_MISSING_DEPENDENCIES=true BUILD_BROKEN_DISABLE_BAZEL=1 nothing
+    GOROOT=`pwd`/prebuilts/go/linux-x86 TOP=`pwd` $GITHUB_WORKSPACE/soong_ui --make-mode --skip-ninja --skip-soong-tests --skip-write-modules -j1 TARGET_PRODUCT=aosp_cf_x86_64_phone TARGET_BUILD_VARIANT=userdebug ALLOW_MISSING_DEPENDENCIES=true BUILD_BROKEN_DISABLE_BAZEL=1 SKIP_ABI_CHECKS=true nothing
     ./prebuilts/build-tools/linux-x86/bin/ninja -f out/combined-aosp_cf_x86_64_phone.ninja -t commands superimage > superimage.sh
 
     grep 'missing dependencies' superimage.sh || true

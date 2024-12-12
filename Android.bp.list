@@ -3228,7 +3228,6 @@ external/mesa3d/src/Android.bp
 external/mesa3d/src/mesa/Android.bp
 external/mime-support/Android.bp
 external/minigbm/Android.bp
-external/minigbm/cros_gralloc/gralloc3/Android.bp
 external/minigbm/cros_gralloc/gralloc4/Android.bp
 external/minijail/Android.bp
 external/minijail/tools/Android.bp
