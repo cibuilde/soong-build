@@ -25,7 +25,7 @@ task:
     #ls -l aosp/prebuilts/build-tools
 
     export GITHUB_WORKSPACE=$(pwd)
-    pushd aosp
+    cd aosp
     export TOP=$(pwd)
 
     rm -rf build/bazel/
@@ -477,6 +477,10 @@ task:
     git -C build/make/ sparse-checkout set --no-cone '/*'
     git -C build/make/ sparse-checkout reapply
     git -C build/make/ reset --hard HEAD
+
+    git -C build/soong/ sparse-checkout set --no-cone '/*'
+    git -C build/soong/ sparse-checkout reapply
+    git -C build/soong/ reset --hard HEAD
 
     git -C prebuilts/build-tools/ sparse-checkout set --no-cone '/*' '!/*/' 'linux-x86/bin' 'linux-x86/lib64' 'path' 'common'
     git -C prebuilts/build-tools/ sparse-checkout reapply
