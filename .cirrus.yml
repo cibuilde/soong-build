@@ -7,18 +7,11 @@ task:
   environment:
     GITHUB_TOKEN: ENCRYPTED[b4e73d9ecbebfa97dc0d3248d5d0b03a696622c902e63d7e90775f4ee54a18df29547dfc053eb092f94e234531a913a8]
   script: |
-    apt update && apt install -y curl git xz-utils zstd file
+    apt update && apt install -y curl git xz-utils zstd file gh
 
     #./clone_repo android12-gsi android12-gsi.xml
     #tar -caf android12-gsi.tar.zst -C aosp .
     #ls -lh
-
-    #FILE=`pwd`/android12-gsi.tar.zst
-    #curl \
-    #-H "Authorization: token $GITHUB_TOKEN" \
-    #-H "Content-Type: $(file -b --mime-type $FILE)" \
-    #--data-binary @$FILE \
-    #"https://uploads.github.com/repos/cibuilde/soong-build/releases/98812134/assets?name=$(basename $FILE)" || true
 
     curl -LJO https://github.com/cibuilde/soong-build/releases/download/android12-gsi/android12-gsi.tar.zst
     ls -lh android12-gsi.tar.zst && mkdir aosp && tar --no-same-owner -xf android12-gsi.tar.zst -C aosp
@@ -470,6 +463,7 @@ task:
     rm -rf tools/trebuchet/
 
     git clone --filter=tree:0 --depth=1 --no-tags https://android.googlesource.com/platform/external/cros/system_api -b android12-gsi external/cros/system_api
+    git clone --filter=tree:0 --depth=1 --no-tags https://android.googlesource.com/platform/hardware/google/pixel-sepolicy -b android12-gsi hardware/google/pixel-sepolicy
 
     #chown -R $(whoami): .
 
@@ -630,9 +624,4 @@ task:
     --data-binary @$FILE \
     "https://uploads.github.com/repos/cibuilde/soong-build/releases/182392796/assets?name=$(basename $FILE)" || true
 
-    FILE=`pwd`/out_dir.tar.zst
-    curl \
-    -H "Authorization: token $GITHUB_TOKEN" \
-    -H "Content-Type: $(file -b --mime-type $FILE)" \
-    --data-binary @$FILE \
-    "https://uploads.github.com/repos/cibuilde/soong-build/releases/182392796/assets?name=$(basename $FILE)" || true
+    gh release upload fullsystem out_dir.tar.zst --repo cibuilde/soong-build --clobber
