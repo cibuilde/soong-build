@@ -12,6 +12,7 @@ task:
     #./clone_repo android12-gsi android12-gsi.xml
     #tar -caf android12-gsi.tar.zst -C aosp .
     #ls -lh
+    #gh release upload android12-gsi android12-gsi.tar.zst --repo cibuilde/soong-build --clobber
 
     curl -LJO https://github.com/cibuilde/soong-build/releases/download/android12-gsi/android12-gsi.tar.zst
     ls -lh android12-gsi.tar.zst && mkdir aosp && tar --no-same-owner -xf android12-gsi.tar.zst -C aosp
@@ -459,27 +460,93 @@ task:
     #chown -R $(whoami): .
 
     git -C build/make/ sparse-checkout set --no-cone '/*'
-    git -C build/make/ sparse-checkout reapply
-    git -C build/make/ reset --hard HEAD
+    #git -C build/make/ sparse-checkout reapply
+    #git -C build/make/ reset --hard HEAD
+    git -C build/make/ read-tree --reset -u -v HEAD
 
     git -C build/blueprint/ sparse-checkout set --no-cone '/*'
-    git -C build/blueprint/ sparse-checkout reapply
-    git -C build/blueprint/ reset --hard HEAD
+    #git -C build/blueprint/ sparse-checkout reapply
+    #git -C build/blueprint/ reset --hard HEAD
+    git -C build/blueprint/ read-tree --reset -u -v HEAD
 
     git -C build/soong/ sparse-checkout set --no-cone '/*'
-    git -C build/soong/ sparse-checkout reapply
-    git -C build/soong/ reset --hard HEAD
+    #git -C build/soong/ sparse-checkout reapply
+    #git -C build/soong/ reset --hard HEAD
+    git -C build/soong/ read-tree --reset -u -v HEAD
 
     git -C prebuilts/build-tools/ sparse-checkout set --no-cone '/*' '!/*/' 'linux-x86/bin' 'linux-x86/lib64' 'path' 'common'
-    git -C prebuilts/build-tools/ sparse-checkout reapply
-    git -C prebuilts/build-tools/ reset --hard HEAD
+    #git -C prebuilts/build-tools/ sparse-checkout reapply
+    #git -C prebuilts/build-tools/ reset --hard HEAD
+    git -C prebuilts/build-tools/ read-tree --reset -u -v HEAD
 
     git -C device/google/cuttlefish/ sparse-checkout set --no-cone '/*'
-    git -C device/google/cuttlefish/ sparse-checkout reapply
+    #git -C device/google/cuttlefish/ sparse-checkout reapply
+    git -C device/google/cuttlefish/ read-tree --reset -u -v HEAD
 
     git clone --filter=tree:0 --single-branch --no-tags --sparse --depth=1 https://android.googlesource.com/platform/prebuilts/clang-tools -b android12-gsi prebuilts/clang-tools
     git -C prebuilts/clang-tools/ sparse-checkout set --no-cone '/*' '!/*/' 'linux-x86/bin' 'linux-x86/clang-headers' 'linux-x86/lib64/clang'
     git -C prebuilts/clang-tools/ reset --hard HEAD
+
+    echo '' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/amd/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/broadcom/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/compiler/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/egl/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/etnaviv/drm/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/freedreno/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/auxiliary/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/auxiliary/pipe-loader/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/drivers/etnaviv/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/drivers/freedreno/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/drivers/i915/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/drivers/iris/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/drivers/kmsro/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/drivers/nouveau/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/drivers/panfrost/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/drivers/r300/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/drivers/r600/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/drivers/softpipe/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/drivers/svga/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/drivers/tegra/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/drivers/vc4/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/drivers/virgl/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/frontends/dri/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/winsys/etnaviv/drm/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/winsys/freedreno/drm/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/winsys/i915/drm/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/winsys/iris/drm/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/winsys/kmsro/drm/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/winsys/nouveau/drm/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/winsys/panfrost/drm/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/winsys/radeon/drm/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/winsys/svga/drm/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/winsys/sw/dri/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/winsys/sw/kms-dri/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/winsys/tegra/drm/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/winsys/vc4/drm/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/winsys/virgl/common/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/winsys/virgl/drm/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gallium/winsys/virgl/vtest/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/gbm/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/intel/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/loader/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/mesa/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/mesa/drivers/dri/common/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/mesa/drivers/dri/i915/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/mesa/drivers/dri/i965/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/panfrost/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/util/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    echo '/src/vulkan/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
+    git -C external/mesa3d read-tree --reset -u -v HEAD
+    cat external/mesa3d/.git/info/sparse-checkout
+    cat external/mesa3d/src/loader/Makefile.sources
+
+    echo '' >> external/wpa_supplicant_8/.git/info/sparse-checkout
+    echo '/hostapd/android.config' >> external/wpa_supplicant_8/.git/info/sparse-checkout
+    echo '/wpa_supplicant/android.config' >> external/wpa_supplicant_8/.git/info/sparse-checkout
+    git -C external/wpa_supplicant_8 read-tree --reset -u -v HEAD
+    cat external/wpa_supplicant_8/.git/info/sparse-checkout
+    cat external/wpa_supplicant_8/wpa_supplicant/android.config
 
     cp build/make/core/root.mk Makefile
     ln -sf make/CleanSpec.mk build/ && ln -sf make/core build/
