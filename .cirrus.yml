@@ -484,7 +484,7 @@ task:
     git -C device/google/cuttlefish/ read-tree --reset -u -v HEAD
 
     git clone --filter=tree:0 --single-branch --no-tags --sparse --depth=1 https://android.googlesource.com/platform/prebuilts/clang-tools -b android12-gsi prebuilts/clang-tools
-    git -C prebuilts/clang-tools/ sparse-checkout set --no-cone '/*' '!/*/' 'linux-x86/bin' 'linux-x86/clang-headers' 'linux-x86/lib64/clang'
+    git -C prebuilts/clang-tools/ sparse-checkout set --no-cone '/*' '!/*/' '/linux-x86/bin' '/linux-x86/clang-headers' '/linux-x86/lib64/clang'
     git -C prebuilts/clang-tools/ reset --hard HEAD
 
     echo '' >> external/mesa3d/.git/info/sparse-checkout
@@ -537,16 +537,12 @@ task:
     echo '/src/panfrost/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
     echo '/src/util/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
     echo '/src/vulkan/Makefile.sources' >> external/mesa3d/.git/info/sparse-checkout
-    git -C external/mesa3d read-tree --reset -u -v HEAD
-    cat external/mesa3d/.git/info/sparse-checkout
-    cat external/mesa3d/src/loader/Makefile.sources
+    git -C external/mesa3d checkout src/amd/Makefile.sources src/broadcom/Makefile.sources src/compiler/Makefile.sources src/egl/Makefile.sources src/etnaviv/drm/Makefile.sources src/freedreno/Makefile.sources src/gallium/auxiliary/Makefile.sources src/gallium/auxiliary/pipe-loader/Makefile.sources src/gallium/drivers/etnaviv/Makefile.sources src/gallium/drivers/freedreno/Makefile.sources src/gallium/drivers/i915/Makefile.sources src/gallium/drivers/iris/Makefile.sources src/gallium/drivers/kmsro/Makefile.sources src/gallium/drivers/nouveau/Makefile.sources src/gallium/drivers/panfrost/Makefile.sources src/gallium/drivers/r300/Makefile.sources src/gallium/drivers/r600/Makefile.sources src/gallium/drivers/softpipe/Makefile.sources src/gallium/drivers/svga/Makefile.sources src/gallium/drivers/tegra/Makefile.sources src/gallium/drivers/vc4/Makefile.sources src/gallium/drivers/virgl/Makefile.sources src/gallium/frontends/dri/Makefile.sources src/gallium/winsys/etnaviv/drm/Makefile.sources src/gallium/winsys/freedreno/drm/Makefile.sources src/gallium/winsys/i915/drm/Makefile.sources src/gallium/winsys/iris/drm/Makefile.sources src/gallium/winsys/kmsro/drm/Makefile.sources src/gallium/winsys/nouveau/drm/Makefile.sources src/gallium/winsys/panfrost/drm/Makefile.sources src/gallium/winsys/radeon/drm/Makefile.sources src/gallium/winsys/svga/drm/Makefile.sources src/gallium/winsys/sw/dri/Makefile.sources src/gallium/winsys/sw/kms-dri/Makefile.sources src/gallium/winsys/tegra/drm/Makefile.sources src/gallium/winsys/vc4/drm/Makefile.sources src/gallium/winsys/virgl/common/Makefile.sources src/gallium/winsys/virgl/drm/Makefile.sources src/gallium/winsys/virgl/vtest/Makefile.sources src/gbm/Makefile.sources src/intel/Makefile.sources src/loader/Makefile.sources src/mesa/Makefile.sources src/mesa/drivers/dri/common/Makefile.sources src/mesa/drivers/dri/i915/Makefile.sources src/mesa/drivers/dri/i965/Makefile.sources src/panfrost/Makefile.sources src/util/Makefile.sources src/vulkan/Makefile.sources
 
     echo '' >> external/wpa_supplicant_8/.git/info/sparse-checkout
     echo '/hostapd/android.config' >> external/wpa_supplicant_8/.git/info/sparse-checkout
     echo '/wpa_supplicant/android.config' >> external/wpa_supplicant_8/.git/info/sparse-checkout
-    git -C external/wpa_supplicant_8 read-tree --reset -u -v HEAD
-    cat external/wpa_supplicant_8/.git/info/sparse-checkout
-    cat external/wpa_supplicant_8/wpa_supplicant/android.config
+    git -C external/wpa_supplicant_8 checkout hostapd/android.config wpa_supplicant/android.config
 
     cp build/make/core/root.mk Makefile
     ln -sf make/CleanSpec.mk build/ && ln -sf make/core build/
