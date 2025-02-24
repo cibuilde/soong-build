@@ -582,10 +582,11 @@ task:
     gzip superimage.sh
     mv out/soong/build.ninja . && gzip build.ninja
     mv out/build-aosp_cf_x86_64_phone.ninja . && gzip build-aosp_cf_x86_64_phone.ninja
-    mv out/soong/androidmk . && tar -caf androidmk.tar.zst androidmk
-    tar -caf out_dir.tar.zst -C out .
 
     BUILD_HOSTNAME=$(cat /etc/hostname) PATH=`pwd`/prebuilts/build-tools/path/linux-x86:`pwd`/out/.path TOP=`pwd` TARGET_PRODUCT=aosp_cf_x86_64_phone TARGET_BUILD_VARIANT=userdebug BUILD_DATETIME_FILE=out/build_date.txt ALLOW_MISSING_DEPENDENCIES=true ANDROID_JAVA_HOME=prebuilts/jdk/jdk11/linux-x86 ANDROID_JAVA8_HOME=prebuilts/jdk/jdk8/linux-x86 ANDROID_JAVA9_HOME=prebuilts/jdk/jdk9/linux-x86 ANDROID_JAVA11_HOME=prebuilts/jdk/jdk11/linux-x86 TMPDIR=`pwd`/out/soong/.temp OUT_DIR=out ./prebuilts/build-tools/linux-x86/bin/ckati --ninja --ninja_dir=out --ninja_suffix=-aosp_cf_x86_64_phone --no_ninja_prelude --use_ninja_phony_output --use_ninja_symlink_outputs --regen --ignore_optional_include=out/%.P --detect_android_echo --color_warnings --gen_all_targets --use_find_emulator --werror_find_emulator --no_builtin_rules --werror_suffix_rules --werror_real_to_phony --top_level_phony --werror_phony_looks_real --werror_writable --kati_stats --writable out/ --werror_implicit_rules --dump_include_graph ckati_include.json -f build/make/core/main.mk -d SOONG_MAKEVARS_MK=out/soong/make_vars-aosp_cf_x86_64_phone.mk SOONG_ANDROID_MK=out/soong/Android-aosp_cf_x86_64_phone.mk TARGET_DEVICE_DIR=device/google/cuttlefish/vsoc_x86_64 KATI_PACKAGE_MK_DIR=out/target/product/vsoc_x86_64/obj/CONFIG/kati_packaging
+
+    mv out/soong/androidmk . && tar -caf androidmk.tar.zst androidmk
+    tar -caf out_dir.tar.zst -C out .
 
     df -h && du -ah -d1 out && du -ah -d1 out/soong
 
